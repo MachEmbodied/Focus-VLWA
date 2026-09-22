@@ -5,6 +5,12 @@ English | [简体中文](README_zh-CN.md)
 Focus-VLWA jointly models visual history, future world states, and robot actions for dual-arm manipulation.
 This release contains post-training, dataset processing, and local inference. The RoboDojo/XPolicyLab adapter is maintained separately in XPolicyLab under `policy/FocusVLWA`.
 
+## Demo
+
+[![Watch the Focus-VLWA demo](docs/media/demo-preview.jpg)](https://github.com/MachEmbodied/Focus-VLWA/raw/refs/heads/main/docs/media/focus-vlwa-demo.mp4)
+
+Click the preview to watch the full demo (6 minutes).
+
 ## Model design
 
 The implementation is organized around these project-specific components:

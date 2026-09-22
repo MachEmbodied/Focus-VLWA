@@ -13,6 +13,12 @@ Focus-VLWA 面向双臂机器人操作，在统一模型中联合建模视觉历
 
 仓库不包含预训练流水线及与上述能力无关的实验代码。
 
+## 演示视频
+
+[![观看 Focus-VLWA 演示视频](docs/media/demo-preview.jpg)](https://github.com/MachEmbodied/Focus-VLWA/raw/refs/heads/main/docs/media/focus-vlwa-demo.mp4)
+
+点击预览图观看完整演示视频（约 6 分钟）。
+
 ## 模型架构
 
 实现围绕四个项目核心模块组织。
