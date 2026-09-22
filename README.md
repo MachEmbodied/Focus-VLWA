@@ -7,7 +7,7 @@ This release contains post-training, dataset processing, and local inference. Th
 
 ## Demo
 
-[![Watch the Focus-VLWA demo](docs/media/demo-preview.jpg)](https://cdn.jsdelivr.net/gh/MachEmbodied/Focus-VLWA@main/docs/media/focus-vlwa-demo-web.mp4)
+[![Watch the Focus-VLWA demo](docs/media/demo-preview.jpg)](https://cdn.jsdelivr.net/gh/MachEmbodied/Focus-VLWA@870aa92/docs/media/focus-vlwa-demo-web.mp4)
 
 Click the preview to watch the full demo (6 minutes).
 

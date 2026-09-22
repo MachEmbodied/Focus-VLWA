@@ -15,7 +15,7 @@ Focus-VLWA 面向双臂机器人操作，在统一模型中联合建模视觉历
 
 ## 演示视频
 
-[![观看 Focus-VLWA 演示视频](docs/media/demo-preview.jpg)](https://cdn.jsdelivr.net/gh/MachEmbodied/Focus-VLWA@main/docs/media/focus-vlwa-demo-web.mp4)
+[![观看 Focus-VLWA 演示视频](docs/media/demo-preview.jpg)](https://cdn.jsdelivr.net/gh/MachEmbodied/Focus-VLWA@870aa92/docs/media/focus-vlwa-demo-web.mp4)
 
 点击预览图观看完整演示视频（约 6 分钟）。
 
