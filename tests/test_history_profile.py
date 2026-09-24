@@ -17,6 +17,14 @@ def test_missing_model_configuration_is_rejected(tmp_path):
         load_model_config(tmp_path)
 
 
+def test_release_model_configuration(tmp_path):
+    (tmp_path / "model_config.json").write_text(json.dumps({"world_model_loss_weight": 0.0}))
+    config = load_model_config(tmp_path)
+    assert config.history_mode == "head_history"
+    assert config.world_model_loss_weight == 0.0
+    assert config.action_horizon == 50
+
+
 def test_invalid_profile_rejected():
     with pytest.raises(ValueError, match="history_mode"):
         FocusVLWAConfig(history_mode="silent_fallback")

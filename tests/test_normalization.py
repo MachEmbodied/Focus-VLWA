@@ -6,7 +6,7 @@ from focus_vlwa.data.normalization import load_norm_stats, normalize_quantile, u
 
 
 def test_quantile_normalization_round_trip(tmp_path) -> None:
-    directory = tmp_path / "assets" / "robodojo_sim"
+    directory = tmp_path / "assets" / "arx_x5_sim"
     directory.mkdir(parents=True)
     stats = {
         "norm_stats": {

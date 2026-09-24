@@ -42,7 +42,26 @@ uv run focus-vlwa check-checkpoint /path/to/checkpoint
 ```
 
 Use a dedicated environment: the compatibility patch installs into that environment's `transformers==4.53.2`.
-The model uses 20-frame `head_history`, 400 prompt tokens, 32 internal action dimensions, and 50 action steps. Checkpoint loading restores `model_config.json` and requires the current parameter names, including `joint_experts.*`.
+The model uses 20-frame `head_history`, 400 prompt tokens, 32 internal action dimensions, and 50 action steps. Checkpoint loading reads `model_config.json` and maps the released Focus-VLWA weights to the refactored module names. `check-checkpoint` applies the same mapping and checks every stored tensor shape.
+
+## Focus-VLWA checkpoint release
+
+The inference bundle contains exactly these required files:
+
+```text
+focus-vlwa/
+  model.safetensors
+  model_config.json
+  assets/arx_x5_sim/norm_stats.json
+```
+
+The original training directory also contains `metadata.pt` and `optimizer.pt`; neither is needed in an inference release. Keep `model_config.json` alongside the weights so inference never has to deserialize training metadata. The PaliGemma tokenizer is resolved separately: pass `tokenizer_path` for offline use, or allow the package to download it into its cache. Use `asset_id="arx_x5_sim"` when constructing `FocusVLWAPolicy`.
+
+Validate the published directory before evaluation:
+
+```bash
+uv run focus-vlwa check-checkpoint /path/to/focus-vlwa
+```
 
 ## Local inference
 
@@ -101,7 +120,7 @@ Install `.[train]` for LeRobot v3. For v2 datasets, install `.[train-v2]` in a s
 
 The reader accepts native action sequences or precomputed 50-step chunks. Datasets must provide aligned `s1`, `s1_mask`, `event_action`, and `event_action_mask`; frozen training also needs these WM inputs. Head history is queried from the original 25 FPS episode images. WM latents are not quantile-normalized. Set `FOCUS_VLWA_LEROBOT_REPOS` to override shard selection.
 
-The initialization checkpoint must use the current parameter names and include `model_config.json` and normalization assets. Set `--tokenizer-path` when the tokenizer is stored separately.
+An initialization checkpoint must include `model_config.json` and normalization assets. Set `--tokenizer-path` when the tokenizer is stored separately.
 
 ### Joint and frozen stages
 
@@ -139,6 +158,8 @@ Parameter storage uses mixed BF16/FP32 by default. `--parameter-precision float3
 ### Multiple GPUs and resume
 
 For multiple GPUs, replace `focus-vlwa post-train` with `torchrun --standalone --nproc-per-node=8 -m focus_vlwa.scripts.post_train`, keeping the stage arguments above. `--batch-size` is global and must be divisible by the number of processes.
+
+`--num-workers` sets the DataLoader worker count per GPU process; increase it when video decoding stalls training, within the node's CPU and memory capacity. The 20 history frames are encoded in groups of four by default. Set `FOCUS_VLWA_HISTORY_CHUNK_SIZE` to a divisor of 20 to trade peak GPU memory for fewer vision-encoder calls; `1` restores single-frame encoding.
 
 Checkpoints save model weights, optimizer state, model and training configurations, and normalization assets under their original asset ID. Resume an interrupted stage with `--resume-checkpoint checkpoints/joint/SELECTED_CHECKPOINT`; this restores the model, optimizer, and sample cursor. Stage changes use `--init-checkpoint` with a fresh optimizer.
 

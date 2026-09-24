@@ -42,7 +42,7 @@ class FocusVLWAPolicy:
         device: str | None = None,
         tokenizer_path: str | Path | None = None,
         config: FocusVLWAConfig | None = None,
-        asset_id: str = "robodojo_sim",
+        asset_id: str = "arx_x5_sim",
         num_steps: int = 10,
     ):
         self.checkpoint_dir = Path(checkpoint_dir)

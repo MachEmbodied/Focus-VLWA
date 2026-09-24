@@ -17,7 +17,7 @@ class NormStats:
     q99: np.ndarray
 
 
-def load_norm_stats(checkpoint_dir: str | Path, asset_id: str = "robodojo_sim") -> dict[str, NormStats]:
+def load_norm_stats(checkpoint_dir: str | Path, asset_id: str = "arx_x5_sim") -> dict[str, NormStats]:
     """Load normalization statistics stored beside a Focus-VLWA checkpoint."""
     path = Path(checkpoint_dir) / "assets" / asset_id / "norm_stats.json"
     if not path.is_file():

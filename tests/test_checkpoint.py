@@ -40,8 +40,8 @@ def test_loaded_world_weights_are_preserved_until_explicitly_reinitialized(tmp_p
         assert (parameter == 1).all()
 
 
-@pytest.mark.parametrize("prefix", ["backbone.action_expert.", "paligemma_with_expert.gemma_expert."])
-def test_loader_and_checker_reject_old_names(tmp_path, monkeypatch, prefix):
+@pytest.mark.parametrize("prefix", ["backbone.action_expert."])
+def test_loader_and_checker_reject_unknown_names(tmp_path, monkeypatch, prefix):
     model = Model()
     state = model.state_dict()
     for key in list(state):
@@ -56,6 +56,33 @@ def test_loader_and_checker_reject_old_names(tmp_path, monkeypatch, prefix):
     assert "joint_experts.action_expert.weight" in missing
     assert prefix + "weight" in unexpected
     assert shapes == []
+
+
+def test_loader_and_checker_accept_release_checkpoint_names(tmp_path, monkeypatch):
+    original = Model()
+    with torch.no_grad():
+        for name, value in original.named_parameters():
+            value.fill_(7 if "world_model" in name else 1)
+    prefixes = (
+        ("joint_experts.action_expert.", "paligemma_with_expert.gemma_expert."),
+        ("joint_experts.world_model_expert.", "paligemma_with_expert.gemma_wm_expert."),
+        ("action_input_projection.", "action_in_proj."),
+        ("action_output_projection.", "action_out_proj."),
+        ("world_model_input_projection.", "wm_in_proj."),
+        ("world_model_output_projection.", "wm_out_proj."),
+    )
+    release_state = {}
+    for key, value in original.state_dict().items():
+        source_key = next((old + key[len(new):] for new, old in prefixes if key.startswith(new)), key)
+        release_state[source_key] = value
+    save_file(release_state, tmp_path / "model.safetensors")
+    (tmp_path / "model_config.json").write_text("{}")
+    loaded = Model()
+    load_checkpoint_weights(loaded, tmp_path)
+    monkeypatch.setattr(check_checkpoint, "FocusVLWA", lambda config: Model())
+    assert check_checkpoint.validate_checkpoint(tmp_path) == ([], [], [])
+    for key, value in original.state_dict().items():
+        torch.testing.assert_close(loaded.state_dict()[key], value)
 
 
 def test_current_checkpoint_passes_checker(tmp_path, monkeypatch):

@@ -70,7 +70,26 @@ Transformers 补丁会安装到当前独立环境中的 `transformers==4.53.2`�
 
 ## 模型配置
 
-模型统一使用20帧完整头部历史 `head_history`，文本长度为400，内部动作维度为32，动作预测长度为50步。检查点通过 `model_config.json` 恢复配置，权重参数名使用当前的 `joint_experts.*` 等格式。
+模型统一使用20帧完整头部历史 `head_history`，文本长度为400，内部动作维度为32，动作预测长度为50步。检查点通过 `model_config.json` 恢复配置；加载器会把发布的 Focus-VLWA 权重参数名映射到重构后的模块，`check-checkpoint` 使用相同映射逐项检查张量形状。
+
+## Focus-VLWA 权重发布文件
+
+推理发布包只需要以下文件：
+
+```text
+focus-vlwa/
+  model.safetensors
+  model_config.json
+  assets/arx_x5_sim/norm_stats.json
+```
+
+原训练目录中的 `metadata.pt` 和 `optimizer.pt` 是训练产物，不需要随推理权重发布。把 `model_config.json` 与权重放在同一目录，推理时便无需反序列化训练元数据。PaliGemma 分词器单独获取：离线运行时传入 `tokenizer_path`，联网运行时可由包下载并缓存。创建 `FocusVLWAPolicy` 时设置 `asset_id="arx_x5_sim"`。
+
+评测前检查发布目录：
+
+```bash
+uv run focus-vlwa check-checkpoint /path/to/focus-vlwa
+```
 
 ## 本地推理
 
@@ -153,7 +172,7 @@ XPolicyLab 仓库 `policy/FocusVLWA` 中的适配器会逐控制步收集完整�
 
 读取器支持原生动作序列或预先计算的50步动作段。数据需包含对齐的 `s1`、`s1_mask`、`event_action`、`event_action_mask`，冻结阶段也需要这些世界模型输入。头部历史从原始25 FPS回合图像中查询，世界模型潜在状态不进行分位数归一化。可通过 `FOCUS_VLWA_LEROBOT_REPOS` 覆盖数据分片选择。
 
-初始化检查点必须使用当前参数名，并包含 `model_config.json` 和归一化资产。分词器单独存放时，通过 `--tokenizer-path` 指定。
+初始化检查点必须包含 `model_config.json` 和归一化资产。分词器单独存放时，通过 `--tokenizer-path` 指定。
 
 ### 联合阶段与冻结阶段
 
