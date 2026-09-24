@@ -72,12 +72,14 @@ Transformers 补丁会安装到当前独立环境中的 `transformers==4.53.2`�
 
 模型统一使用20帧完整头部历史 `head_history`，文本长度为400，内部动作维度为32，动作预测长度为50步。检查点通过 `model_config.json` 恢复配置；加载器会把发布的 Focus-VLWA 权重参数名映射到重构后的模块，`check-checkpoint` 使用相同映射逐项检查张量形状。
 
-## Focus-VLWA 权重发布文件
+## focus-vlwa checkpoint
+
+已发布的模型权重及推理配套文件可从 [Hugging Face：zhengjingxie/focus-vlwa](https://huggingface.co/zhengjingxie/focus-vlwa) 下载。
 
 推理发布包只需要以下文件：
 
 ```text
-focus-vlwa/
+focus-vlwa-release/
   model.safetensors
   model_config.json
   assets/arx_x5_sim/norm_stats.json
@@ -88,7 +90,7 @@ focus-vlwa/
 评测前检查发布目录：
 
 ```bash
-uv run focus-vlwa check-checkpoint /path/to/focus-vlwa
+uv run focus-vlwa check-checkpoint /path/to/focus-vlwa-release
 ```
 
 ## 本地推理

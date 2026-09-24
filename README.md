@@ -44,12 +44,14 @@ uv run focus-vlwa check-checkpoint /path/to/checkpoint
 Use a dedicated environment: the compatibility patch installs into that environment's `transformers==4.53.2`.
 The model uses 20-frame `head_history`, 400 prompt tokens, 32 internal action dimensions, and 50 action steps. Checkpoint loading reads `model_config.json` and maps the released Focus-VLWA weights to the refactored module names. `check-checkpoint` applies the same mapping and checks every stored tensor shape.
 
-## Focus-VLWA checkpoint release
+## focus-vlwa checkpoint
+
+Download the released weights and inference files from [Hugging Face: zhengjingxie/focus-vlwa](https://huggingface.co/zhengjingxie/focus-vlwa).
 
 The inference bundle contains exactly these required files:
 
 ```text
-focus-vlwa/
+focus-vlwa-release/
   model.safetensors
   model_config.json
   assets/arx_x5_sim/norm_stats.json
@@ -60,7 +62,7 @@ The original training directory also contains `metadata.pt` and `optimizer.pt`; 
 Validate the published directory before evaluation:
 
 ```bash
-uv run focus-vlwa check-checkpoint /path/to/focus-vlwa
+uv run focus-vlwa check-checkpoint /path/to/focus-vlwa-release
 ```
 
 ## Local inference
